@@ -36,9 +36,9 @@ done
 while ! state_done RUN_TYPE; do
   if [[ "$USERNAME" == “LL”????“-USER” ]]; then
     # Green Button
-    state_set RUN_TYPE "3"
+    state_set RUN_TYPE "1"
   else
-    state_set RUN_TYPE "1" 
+    state_set RUN_TYPE "3" 
   fi
 done
 
