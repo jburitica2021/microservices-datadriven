@@ -59,6 +59,7 @@ while ! state_done RUN_NAME; do
   fi
   RN=`basename "$PWD"`
   # Validate run name.  Must be between 1 and 12 characters, only letters or numbers, starting with letter
+  if test "$(state_get RUN_TYPE)" == '1'; then
   if [[ "$RN" =~ [a-zA-Z][a-zA-Z0-9]{0,11}$ ]]; then
     state_set RUN_NAME "$RN"
     state_set ORDER_DB_NAME "${RN}o"
@@ -66,6 +67,16 @@ while ! state_done RUN_NAME; do
   else
     echo "Invalid folder name $RN"
     exit
+  fi
+  else
+  if [[ "$RN" =~ [a-zA-Z][a-zA-Z0-9]{0,11}$ ]]; then
+    state_set RUN_NAME "$RN"
+    state_set ORDER_DB_NAME "ORDERDB${state_get RESERVATION_ID}"
+    state_set INVENTORY_DB_NAME "INVENTORYDB${state_get RESERVATION_ID}"
+   else
+    echo "Invalid folder name $RN"
+    exit 
+  fi
   fi
   cd $GRABDISH_HOME
 done
@@ -87,12 +98,16 @@ done
 
 # Create the compartment
 while ! state_done COMPARTMENT_OCID; do
+if test "$(state_get RUN_TYPE)" == '1'; then
   echo "Resources will be created in a new compartment named $(state_get RUN_NAME)"
   COMPARTMENT_OCID=`oci iam compartment create --compartment-id "$(state_get TENANCY_OCID)" --name "$(state_get RUN_NAME)" --description "GribDish Workshop" --query 'data.id' --raw-output`
   while ! test `oci iam compartment get --compartment-id "$COMPARTMENT_OCID" --query 'data."lifecycle-state"' --raw-output`"" == 'ACTIVE'; do
     echo "Waiting for the compartment to become ACTIVE"
     sleep 2
   done
+  else
+  read -p "Please enter your OCI compartments's OCID: " COMPARTMENT_OCID
+  fi
   state_set COMPARTMENT_OCID "$COMPARTMENT_OCID"
 done
 
@@ -102,13 +117,15 @@ source $GRABDISH_HOME/utils/oci-cli-cs-key-auth.sh
 
 
 # Run the terraform.sh in the background
-if ! state_get PROVISIONING; then
+if test "$(state_get RUN_TYPE)" == '1'; then
+ if ! state_get PROVISIONING ; then
   if ps -ef | grep "$GRABDISH_HOME/utils/terraform.sh" | grep -v grep; then
     echo "$GRABDISH_HOME/utils/terraform.sh is already running"
   else
     echo "Executing terraform.sh in the background"
     nohup $GRABDISH_HOME/utils/terraform.sh &>> $GRABDISH_LOG/terraform.log &
   fi
+ fi
 fi
 
 
