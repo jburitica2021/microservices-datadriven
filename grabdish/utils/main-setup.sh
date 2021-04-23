@@ -34,7 +34,7 @@ done
 
 # Identify Run Type
 while ! state_done RUN_TYPE; do
-  if [[ "$USERNAME" =~ LL[0-9]{1,5}-USER$ ]]; then
+  if [[ "$USERNAME" == “LL”????“-USER” ]]; then
     # Green Button
     state_set RUN_TYPE "3"
   else
