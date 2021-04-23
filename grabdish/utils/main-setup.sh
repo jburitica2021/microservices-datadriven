@@ -71,8 +71,8 @@ while ! state_done RUN_NAME; do
   else
   if [[ "$RN" =~ [a-zA-Z][a-zA-Z0-9]{0,11}$ ]]; then
     state_set RUN_NAME "$RN"
-    state_set ORDER_DB_NAME "ORDERDB${state_get RESERVATION_ID}"
-    state_set INVENTORY_DB_NAME "INVENTORYDB${state_get RESERVATION_ID}"
+    state_set ORDER_DB_NAME "ORDERDB$(state_get RESERVATION_ID)"
+    state_set INVENTORY_DB_NAME "INVENTORYDB$(state_get RESERVATION_ID)"
    else
     echo "Invalid folder name $RN"
     exit 
