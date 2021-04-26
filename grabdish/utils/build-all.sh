@@ -8,6 +8,13 @@ set -e
 
 # Provision Repos
 while ! state_done REPOS; do
+if test "$(state_get RUN_TYPE)" == '1'; then
+BUILDS="frontend-helidon admin-helidon order-helidon supplier-helidon-se inventory-helidon inventory-python inventory-nodejs inventory-helidon-se"
+  for b in $BUILDS; do 
+    oci artifacts container repository create --compartment-id "$(state_get COMPARTMENT_OCID)" --display-name "(state_get RUN_NAME)/$b" --is-public true
+  done
+  state_set_done REPOS
+else
   BUILDS="frontend-helidon admin-helidon order-helidon supplier-helidon-se inventory-helidon inventory-python inventory-nodejs inventory-helidon-se"
   for b in $BUILDS; do 
     oci artifacts container repository create --compartment-id "$(state_get COMPARTMENT_OCID)" --display-name "LL$(state_get RESERVATION_ID)/$b" --is-public true
