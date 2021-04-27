@@ -14,6 +14,7 @@ if test "$(state_get RUN_TYPE)" == '1'; then
 else
   oci os bucket create --compartment-id "$(state_get COMPARTMENT_OCID)" --name "$(state_get RUN_NAME)$(state_get RESERVATION_ID)"
   state_set_done OBJECT_STORE_BUCKET
+ fi
 done
 
 
