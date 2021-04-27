@@ -223,14 +223,16 @@ fi
 
 
 # Wait for provisioning
+if test "$(state_get RUN_TYPE)" == '1'; then
 if ! state_done PROVISIONING; then
   echo "`date`: Waiting for terraform provisioning"
   while ! state_done PROVISIONING; do
     LOGLINE=`tail -1 $GRABDISH_LOG/terraform.log`
     echo -ne r"\033[2K\r${LOGLINE:0:120}"
-    sleep 2
+    sleep 2 
   done
   echo
+fi
 fi
 
 
