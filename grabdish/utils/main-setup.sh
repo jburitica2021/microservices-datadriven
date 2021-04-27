@@ -236,6 +236,7 @@ fi
 
 # Get Order DB OCID
 while ! state_done ORDER_DB_OCID; do
+if test "$(state_get RUN_TYPE)" == '1'; then
   ORDER_DB_OCID=`oci db autonomous-database list --compartment-id "$(cat state/COMPARTMENT_OCID)" --query 'join('"' '"',data[?"display-name"=='"'ORDERDB'"'].id)' --raw-output`
   if [[ "$ORDER_DB_OCID" =~ ocid1.autonomousdatabase* ]]; then
     state_set ORDER_DB_OCID "$ORDER_DB_OCID"
@@ -243,6 +244,7 @@ while ! state_done ORDER_DB_OCID; do
     echo "ERROR: Incorrect Order DB OCID: $ORDER_DB_OCID"
     exit
   fi
+ fi 
 done
 
 
