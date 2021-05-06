@@ -17,6 +17,6 @@ fi
 
 export IMAGE=${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_VERSION}
 
-docker build -t $IMAGE .
+time docker build -t $IMAGE .
 
-docker push $IMAGE
+time docker push $IMAGE
